@@ -265,6 +265,15 @@ exports.Doclet.prototype.augment = function(base) {
     this.augments.push(base);
 };
 
+
+exports.Doclet.prototype.inter = function(base) {
+    if (!this.interfaces) {
+        this.interfaces = [];
+    }
+    this.interfaces.push(base);
+};
+
+
 /**
     Set the `meta` property of this doclet.
     @param {object} meta

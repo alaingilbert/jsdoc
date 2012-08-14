@@ -44,6 +44,12 @@
     <?js } ?>
     </div>
     
+    <?js if (doc.interfaces && doc.interfaces.length) { ?>
+        <ul><?js doc.interfaces.forEach(function(a) { ?>
+            <li>INTERFACE: <?js= self.linkto(a, a) ?></li>
+        <?js }); ?></ul>
+    <?js } ?>
+
     <?js if (doc.augments && doc.augments.length) { ?>
         <h3 class="subsection-title">Extends</h3>
         

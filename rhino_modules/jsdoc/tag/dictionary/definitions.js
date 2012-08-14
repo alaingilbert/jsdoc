@@ -149,6 +149,40 @@ exports.defineTags = function(dictionary) {
     })
     .synonym('extends');
     
+
+
+    dictionary.defineTag('implements', {
+      mustHaveValue: true,
+        // Allow augments value to be specified as a normal type, e.g. {Type}
+        onTagText: function(text) {
+            var type = require('jsdoc/tag/type'),
+                tagType = type.getTagType(text);
+            return tagType.type || text;
+        },
+        onTagged: function(doclet, tag) {
+            doclet.inter( firstWordOf(tag.value) );
+        }
+    });
+
+
+    dictionary.defineTag('interface', {
+        onTagged: function(doclet, tag) {
+            doclet.addTag('kind', 'class');
+            
+            // handle special case where both @class and @constructor tags exist in same doclet
+            if (tag.originalTitle === 'class') {
+                var looksLikeDesc = (tag.value || '').match(/\S+\s+\S+/); // multiple words after @class?
+                if ( looksLikeDesc || /@construct(s|or)\b/i.test(doclet.comment) ) {
+                    doclet.classdesc = tag.value; // treat the @class tag as a @classdesc tag instead
+                    return;
+                }
+            }
+            
+            setDocletNameToValue(doclet, tag);
+        }
+    });
+
+
     // that adds on to me
     dictionary.defineTag('borrows', {
         mustHaveValue: true,

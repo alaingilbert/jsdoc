@@ -2,3 +2,6 @@ build-files/java/build
 jsdoc.jar
 test/tutorials/out
 conf.json
+*.swp
+sources/
+out/
