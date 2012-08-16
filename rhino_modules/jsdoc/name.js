@@ -1,4 +1,3 @@
-/*global Packages: true */
 /**
     A collection of functions relating to JSDoc symbol name manipulation.
     @module jsdoc/name
@@ -12,8 +11,7 @@ var jsdoc = {
     };
 
 var puncToScope = { '.': 'static', '~': 'inner', '#': 'instance' },
-    scopeToPunc = { 'static': '.', 'inner': '~', 'instance': '#' },
-    Token  = Packages.org.mozilla.javascript.Token;
+    scopeToPunc = { 'static': '.', 'inner': '~', 'instance': '#' };
     
 /**
     Resolves the longname, memberof, variation and name values of the given doclet.
