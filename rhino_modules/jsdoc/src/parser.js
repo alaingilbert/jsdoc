@@ -6,8 +6,8 @@
  * @requires common/events
  */
 
-var Token = Packages.org.mozilla.javascript.Token,
-    currentParser = null,
+var Token = require('jsdoc/token');
+var currentParser = null,
     currentSourceName = '',
     hasOwnProp = Object.prototype.hasOwnProperty;
 
@@ -150,7 +150,7 @@ function getTypeName(node) {
     var type = '';
 
     if (node) {
-        type = ''+ Packages.org.mozilla.javascript.Token.typeToName(node.getType());
+        type = ''+ Token.typeToName(node.getType());
     }
 
     return type;
@@ -481,11 +481,11 @@ exports.Parser.prototype._parseSourceCode = function(sourceCode, sourceName) {
         sourceCode = pretreat(e.source);
 
         var ast = parserFactory().parse(sourceCode, sourceName, 1);
-        ast.visit(
-            new Packages.org.mozilla.javascript.ast.NodeVisitor({
-                visit: visitNode
-            })
-        );
+        //ast.visit(
+        //    new Packages.org.mozilla.javascript.ast.NodeVisitor({
+        //        visit: visitNode
+        //    })
+        //);
     }
 
     this.fire('fileComplete', e);

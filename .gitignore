@@ -3,5 +3,6 @@ jsdoc.jar
 test/tutorials/out
 conf.json
 *.swp
+*.swo
 sources/
 out/
