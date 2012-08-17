@@ -32,7 +32,7 @@ exports.Template = function(path) {
     @return {function} Returns template closure.
  */
 exports.Template.prototype.load = function(file) {
-    return template.render(fs.readFileSync(this.path + file));
+    return template.render(fs.readFileSync(this.path + file).toString());
 };
 
 // templates cache

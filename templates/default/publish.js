@@ -8,7 +8,7 @@ var mkdirp = require('mkdirp');
         helper = require('../../rhino_modules/jsdoc/util/templateHelper'),
         scopeToPunc = { 'static': '.', 'inner': '~', 'instance': '#' },
         hasOwnProp = Object.prototype.hasOwnProperty;
-    
+
     /**
         @global
         @param {TAFFY} data See <http://taffydb.com/>.
@@ -20,7 +20,7 @@ var mkdirp = require('mkdirp');
         var templatePath = (opts.template) ? opts.template : defaultTemplatePath;
         var out = '',
             view = new template.Template(env.dirname + '/' + templatePath + '/tmpl');
-        
+
         // set up templating
         view.layout = 'layout.tmpl';
 
@@ -30,7 +30,7 @@ var mkdirp = require('mkdirp');
         function find(spec) {
             return data.get( data.find(spec) );
         }
-        
+
         function htmlsafe(str) {
             return str.replace(/</g, '&lt;');
         }
@@ -45,10 +45,10 @@ var mkdirp = require('mkdirp');
                     }
                 });
             }
-            
+
             f.signature = (f.signature || '') + '('+pnames.join(', ')+')';
         }
-        
+
         function generateAncestry(thisdoc) {
             var ancestors = [],
                 doc = thisdoc;
@@ -64,7 +64,7 @@ var mkdirp = require('mkdirp');
             }
             return ancestors;
         }
-        
+
         function addSignatureReturns(f) {
             var returnTypes = [];
             
@@ -75,7 +75,7 @@ var mkdirp = require('mkdirp');
                     }
                 });
             }
-            
+
             if (returnTypes && returnTypes.length) {
                 returnTypes = returnTypes.map(function(r) {
                     return linkto(r);
@@ -83,7 +83,7 @@ var mkdirp = require('mkdirp');
             }
             f.signature = '<span class="signature">'+(f.signature || '') + '</span>' + '<span class="type-signature">'+(returnTypes.length? ' &rarr; {'+returnTypes.join('|')+'}' : '')+'</span>';
         }
-        
+
         function addSignatureType(f) {
             var types = [];
             
@@ -99,7 +99,7 @@ var mkdirp = require('mkdirp');
             
             f.signature = (f.signature || '') + '<span class="type-signature">'+(types.length? ' :'+types.join('|') : '')+'</span>';
         }
-        
+
         function addAttribs(f) {
             var attribs = [];
             
@@ -130,52 +130,52 @@ var mkdirp = require('mkdirp');
             
             f.attribs = '<span class="type-signature">'+htmlsafe(attribs.length? '<'+attribs.join(', ')+'> ' : '')+'</span>';
         }
-        
+
         data.remove({undocumented: true});
         data.remove({ignore: true});
         if (!opts.private) { data.remove({access: 'private'}); }
         data.remove({memberof: '<anonymous>'});
-	    
-	    var packageInfo = (find({kind: 'package'}) || []) [0];
+
+      var packageInfo = (find({kind: 'package'}) || []) [0];
         
         //function renderLinks(text) {
         //    return helper.resolveLinks(text);
         //}
         
-	    data.forEach(function(doclet) {
+      data.forEach(function(doclet) {
              doclet.attribs = '';
 
-	        
-	        if (doclet.examples) {
-	            doclet.examples = doclet.examples.map(function(example) {
-	                var caption, code;
-	                
-	                if (example.match(/^\s*<caption>([\s\S]+?)<\/caption>(\s*[\n\r])([\s\S]+)$/i)) {
-	                    caption = RegExp.$1;
-	                    code    = RegExp.$3;
-	                }
-	                
+
+          if (doclet.examples) {
+              doclet.examples = doclet.examples.map(function(example) {
+                  var caption, code;
+
+                  if (example.match(/^\s*<caption>([\s\S]+?)<\/caption>(\s*[\n\r])([\s\S]+)$/i)) {
+                      caption = RegExp.$1;
+                      code    = RegExp.$3;
+                  }
+
                     return {
                         caption: caption || '',
                         code: code || example
                     };
                 });
-	        }
-	        if (doclet.see) {
-	            doclet.see.forEach(function(seeItem, i) {
-	                doclet.see[i] = hashToLink(doclet, seeItem);
-	            });
-	        }
-	    });
-	    
-	    data.orderBy(['longname', 'version', 'since']);
-        
+          }
+          if (doclet.see) {
+              doclet.see.forEach(function(seeItem, i) {
+                  doclet.see[i] = hashToLink(doclet, seeItem);
+              });
+          }
+      });
+
+      data.orderBy(['longname', 'version', 'since']);
+
         // kinds of containers
         var globals = find( {kind: ['member', 'function', 'constant', 'typedef'], memberof: {isUndefined: true}} ),
             modules = find({kind: 'module'}),
             externals = find({kind: 'external'}),
             mixins = find({kind: 'mixin'}),
-	        namespaces = find({kind: 'namespace'});
+          namespaces = find({kind: 'namespace'});
 
         var outdir = opts.destination;
         if (packageInfo && packageInfo.name) {
@@ -187,68 +187,100 @@ var mkdirp = require('mkdirp');
 
         // copy static files to outdir
         var fromDir = env.dirname + '/' + templatePath + '/static';
-        var staticFiles = fs.ls(fromDir, 3);
-            
+        var staticFiles = fs.readdirSync(fromDir+'/styles'); // TODO: remove styles... readdir recursive...
+        for (var i = 0; i < staticFiles.length; i++) {
+          staticFiles[i] = fromDir + '/styles/' + staticFiles[i];
+        }
+
+
+copyFileSync = function(srcFile, destFile) {
+  var BUF_LENGTH, buff, bytesRead, fdr, fdw, pos;
+  BUF_LENGTH = 64 * 1024;
+  buff = new Buffer(BUF_LENGTH);
+  fdr = fs.openSync(srcFile, 'r');
+  fdw = fs.openSync(destFile, 'w');
+  bytesRead = 1;
+  pos = 0;
+  while (bytesRead > 0) {
+    bytesRead = fs.readSync(fdr, buff, 0, BUF_LENGTH, pos);
+    fs.writeSync(fdw, buff, 0, bytesRead);
+    pos += bytesRead;
+  }
+  fs.closeSync(fdr);
+  return fs.closeSync(fdw);
+};
+
+
         staticFiles.forEach(function(fileName) {
-            var toDir = fs.toDir(fileName.replace(fromDir, outdir));
+            var tmp = fileName.replace(fromDir, outdir)
+
+            if (fs.existsSync(tmp) && fs.statSync(tmp).isDirectory()){
+               var toDir = tmp;
+            } else {
+              var parts = tmp.split(/[\\\/]/);
+              parts.pop();
+              var toDir = parts.join('/');
+            }
+
+            //var toDir = fs.toDir(tmp);
             mkdirp(toDir, function(err) {
-              fs.copyFile(fileName, toDir);
+              var fname = fileName.split(/[\\\/]/).pop();
+              copyFileSync(fileName, toDir+'/'+fname);
             });
         });
-        
+
         function linkto(longname, linktext) {
             var url = helper.longnameToUrl[longname];
             return url? '<a href="'+url+'">'+(linktext || longname)+'</a>' : (linktext || longname);
         }
-        
+
         function tutoriallink(tutorial) {
             return helper.toTutorial(tutorial);
         }
-        
+
         var containers = ['class', 'module', 'external', 'namespace', 'mixin'];
-        
+
         data.forEach(function(doclet) {
             var url = helper.createLink(doclet);
             helper.registerLink(doclet.longname, url);
         });
-        
+
         data.forEach(function(doclet) {
             var url = helper.longnameToUrl[doclet.longname];
 
-	        if (url.indexOf('#') > -1) {
-	            doclet.id = helper.longnameToUrl[doclet.longname].split(/#/).pop();
-	        }
-	        else {
-	            doclet.id = doclet.name;
-	        }
-	        
-	        if (doclet.kind === 'function' || doclet.kind === 'class') {
-	            addSignatureParams(doclet);
-	            addSignatureReturns(doclet);
-	            addAttribs(doclet);
-	        }
-	    });
-        
+          if (url.indexOf('#') > -1) {
+              doclet.id = helper.longnameToUrl[doclet.longname].split(/#/).pop();
+          } else {
+              doclet.id = doclet.name;
+          }
+
+          if (doclet.kind === 'function' || doclet.kind === 'class') {
+              addSignatureParams(doclet);
+              addSignatureReturns(doclet);
+              addAttribs(doclet);
+          }
+        });
+
         // do this after the urls have all been generated
         data.forEach(function(doclet) {
             doclet.ancestors = generateAncestry(doclet);
-            
+
             doclet.signature = '';
-	        
-	        if (doclet.kind === 'member') {
-	            addSignatureType(doclet);
-	            addAttribs(doclet);
-	        }
-	        
-	        if (doclet.kind === 'constant') {
-	            addSignatureType(doclet);
-	            addAttribs(doclet);
-	        }
+
+          if (doclet.kind === 'member') {
+              addSignatureType(doclet);
+              addAttribs(doclet);
+          }
+
+          if (doclet.kind === 'constant') {
+              addSignatureType(doclet);
+              addAttribs(doclet);
+          }
         });
-        
+
         var nav = '<h2><a href="index.html">Index</a></h2>',
             seen = {};
-        
+
         var moduleNames = find({kind: 'module'});
         moduleNames.sort(function(a, b) {
             return a.name > b.name;
@@ -261,10 +293,10 @@ var mkdirp = require('mkdirp');
                 }
                 seen[m.longname] = true;
             });
-            
+
             nav += '</ul>';
         }
-        
+
         var externalNames = find({kind: 'external'});
         externalNames.sort(function(a, b) {
             return a.name > b.name;
@@ -280,7 +312,7 @@ var mkdirp = require('mkdirp');
             
             nav += '</ul>';
         }
-    
+
         var classNames = find({kind: 'class'});
         classNames.sort(function(a, b) {
             return a.name > b.name;
@@ -303,10 +335,10 @@ var mkdirp = require('mkdirp');
                 }
                 seen[c.longname] = true;
             });
-            
+
             nav += '</ul>';
         }
-        
+
         var namespaceNames = find({kind: 'namespace'});
         namespaceNames.sort(function(a, b) {
             return a.name > b.name;
@@ -319,10 +351,10 @@ var mkdirp = require('mkdirp');
                 }
                 seen[n.longname] = true;
             });
-            
+
             nav += '</ul>';
         }
-        
+
 //         var constantNames = find({kind: 'constants'});
 //         if (constantNames.length) {
 //             nav += '<h3>Constants</h3><ul>';
@@ -335,7 +367,7 @@ var mkdirp = require('mkdirp');
 //
 //             nav += '</ul>';
 //         }
-        
+
         var mixinNames = find({kind: 'mixin'});
         mixinNames.sort(function(a, b) {
             return a.name > b.name;
@@ -348,7 +380,7 @@ var mkdirp = require('mkdirp');
                 }
                 seen[m.longname] = true;
             });
-            
+
             nav += '</ul>';
         }
 
@@ -357,27 +389,27 @@ var mkdirp = require('mkdirp');
             tutorials.children.forEach(function(t) {
                 nav += '<li>'+tutoriallink(t.name)+'</li>';
             });
-            
+
             nav += '</ul>';
         }
-        
+
         var globalNames = find({kind: ['member', 'function', 'constant', 'typedef'], 'memberof': {'isUndefined': true}});
         globalNames.sort(function(a, b) {
             return a.name > b.name;
         });
         if (globalNames.length) {
             nav += '<h3>Global</h3><ul>';
-            
+
             globalNames.forEach(function(g) {
                 if ( g.kind !== 'typedef' && !hasOwnProp.call(seen, g.longname) ) {
                     nav += '<li>'+linkto(g.longname, g.name)+'</li>';
                 }
                 seen[g.longname] = true;
             });
-            
+
             nav += '</ul>';
         }
-        
+
         // add template helpers
         view.find = find;
         view.linkto = linkto;
@@ -391,50 +423,50 @@ var mkdirp = require('mkdirp');
                 title: title,
                 docs: docs
             };
-            
+
             var path = outdir + '/' + filename,
                 html = view.render('container.tmpl', data);
-            
+
             html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
-            
+
             fs.writeFileSync(path, html);
         }
-        
+
         for (var longname in helper.longnameToUrl) {
             if ( hasOwnProp.call(helper.longnameToUrl, longname) ) {
                 var classes = find({kind: 'class', longname: longname});
                 if (classes.length) { generate('Class: '+classes[0].name, classes, helper.longnameToUrl[longname]); }
-        
+
                 var modules = find({kind: 'module', longname: longname});
                 if (modules.length) { generate('Module: '+modules[0].name, modules, helper.longnameToUrl[longname]); }
-            
+
                 var namespaces = find({kind: 'namespace', longname: longname});
                 if (namespaces.length) { generate('Namespace: '+namespaces[0].name, namespaces, helper.longnameToUrl[longname]); }
-            
+
 //                var constants = find({kind: 'constant', longname: longname});
 //                if (constants.length) { generate('Constant: '+constants[0].name, constants, helper.longnameToUrl[longname]); }
 
                 var mixins = find({kind: 'mixin', longname: longname});
                 if (mixins.length) { generate('Mixin: '+mixins[0].name, mixins, helper.longnameToUrl[longname]); }
-        
+
                 var externals = find({kind: 'external', longname: longname});
                 if (externals.length) { generate('External: '+externals[0].name, externals, helper.longnameToUrl[longname]); }
             }
         }
 
         if (globals.length) { generate('Global', [{kind: 'globalobj'}], 'global.html'); }
-        
+
         // index page displays information from package.json and lists files
         var files = find({kind: 'file'}),
             packages = find({kind: 'package'});
 
         generate('Index',
-			packages.concat(
-			    [{kind: 'mainpage', readme: opts.readme, longname: (opts.mainpagetitle) ? opts.mainpagetitle : 'Main Page'}]
-			).concat(files)
-		, 'index.html');
-        
-        
+      packages.concat(
+          [{kind: 'mainpage', readme: opts.readme, longname: (opts.mainpagetitle) ? opts.mainpagetitle : 'Main Page'}]
+      ).concat(files)
+    , 'index.html');
+
+
         function generateTutorial(title, tutorial, filename) {
             var data = {
                 title: title,
@@ -442,16 +474,16 @@ var mkdirp = require('mkdirp');
                 content: tutorial.parse(),
                 children: tutorial.children
             };
-            
+
             var path = outdir + '/' + filename,
                 html = view.render('tutorial.tmpl', data);
-            
+
             // yes, you can use {@link} in tutorials too!
             html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
-            
+
             fs.writeFileSync(path, html);
         }
-        
+
         // tutorials can have only one parent so there is no risk for loops
         function saveChildren(node) {
             node.children.forEach(function(child) {
@@ -461,14 +493,14 @@ var mkdirp = require('mkdirp');
         }
         saveChildren(tutorials);
     };
-    
+
     function hashToLink(doclet, hash) {
         if ( !/^(#.+)/.test(hash) ) { return hash; }
-        
+
         var url = helper.createLink(doclet);
-        
+
         url = url.replace(/(#.+|$)/, hash);
         return '<a href="'+url+'">'+hash+'</a>';
     }
-    
+
 }());

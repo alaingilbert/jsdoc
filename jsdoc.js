@@ -78,7 +78,6 @@ env.args = args;
 function include(filepath) {
     try {
         filepath = include.resolve(filepath);
-        console.log(filepath);
         require(filepath);
     }
     catch (e) {
