@@ -118,7 +118,7 @@ exports.Parser.prototype.getVisitors = function() {
 };
 
 function pretreat(code) {
-    return code
+    return code.toString()
         // make starbangstar comments look like real jsdoc comments
         .replace(/\/\*\!\*/g, '/**')
 
