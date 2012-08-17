@@ -36,13 +36,18 @@ exports.Scanner.prototype.scan = function(searchPaths, depth, filter) {
     depth = depth || 1;
 
     searchPaths.forEach(function($) {
-        var filepath = decodeURIComponent($);
-        if ( fs.statSync(filepath).isFile() ) {
-            filePaths.push(filepath);
+      var filepath = decodeURIComponent($);
+      if ( fs.statSync(filepath).isFile() ) {
+          filePaths.push(filepath);
+      }
+      else {
+        var files = fs.readdirSync(filepath);
+        for (var i = 0; i < files.length; i++) {
+          files[i] = filepath + files[i];
         }
-        else {
-            filePaths = filePaths.concat(fs.readdirSync(filepath));
-        }
+
+        filePaths = filePaths.concat(files);
+      }
     });
     
     filePaths = filePaths.filter(function($) {

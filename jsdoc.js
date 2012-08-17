@@ -269,7 +269,6 @@ function main() {
     if (env.conf.source && env.opts._.length > 0) { // are there any files to scan and parse?
         var filter = new (require('./rhino_modules/jsdoc/src/filter').Filter)(env.conf.source);
 
-        //console.log(env.opts._);
         sourceFiles = app.jsdoc.scanner.scan(env.opts._, (env.opts.recurse? 10 : undefined), filter);
 
         require('./rhino_modules/jsdoc/src/handlers').attachTo(app.jsdoc.parser);
