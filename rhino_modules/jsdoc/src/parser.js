@@ -6,7 +6,8 @@
  * @requires common/events
  */
 
-var Token = require('jsdoc/token');
+var Token = require('../token');
+var MParser = require('../parser').Parser;
 var currentParser = null,
     currentSourceName = '',
     hasOwnProp = Object.prototype.hasOwnProperty;
@@ -61,6 +62,7 @@ exports.Parser.prototype.parse = function(sourceFiles, encoding) {
         }
         else {
             filename = sourceFiles[i];
+            console.log(filename);
             try {
                 sourceCode = require('fs').readFileSync(filename, encoding);
             }
@@ -132,15 +134,13 @@ exports.Parser.tkn = tkn;
 
 /** @private */
 function parserFactory() {
-    var cx = Packages.org.mozilla.javascript.Context.getCurrentContext();
+    var env = {
+      recordingComments: true,
+      recordingLocalJsDocComments: true,
+      languageVersion: 180
+    };
 
-    var ce = new Packages.org.mozilla.javascript.CompilerEnvirons();
-    ce.setRecordingComments(true);
-    ce.setRecordingLocalJsDocComments(true);
-    ce.setLanguageVersion(180);
-
-    ce.initFromContext(cx);
-    return new Packages.org.mozilla.javascript.Parser(ce, ce.getErrorReporter());
+    return new MParser(env);
 }
 
 /** @private

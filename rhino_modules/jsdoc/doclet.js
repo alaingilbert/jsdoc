@@ -13,10 +13,10 @@
 
 var jsdoc = {
     tag: {
-        Tag: require('jsdoc/tag').Tag,
-        dictionary: require('jsdoc/tag/dictionary')
+        Tag: require('./tag').Tag,
+        dictionary: require('./tag/dictionary')
     },
-    name: require('jsdoc/name')
+    name: require('./name')
 };
 
 function applyTag(tag) {

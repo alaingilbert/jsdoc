@@ -5,7 +5,7 @@
 	@license Apache License 2.0 - See file 'LICENSE.md' in this project.
  */
 
-var doop = require("jsdoc/util/doop").doop;
+var doop = require("./util/doop").doop;
 
 // requires docs to have been indexed: docs.index must be defined here
 /**

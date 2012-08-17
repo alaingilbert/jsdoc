@@ -6,7 +6,7 @@
  */
 
 var common = {
-	args: require('common/args')
+	args: require('../../../node_modules/common/args')
 };
 
 var argParser = new common.args.ArgParser(),

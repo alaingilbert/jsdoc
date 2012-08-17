@@ -16,9 +16,9 @@
 
 var jsdoc = {
     tag: {
-        dictionary: require('jsdoc/tag/dictionary'),
-        validator: require('jsdoc/tag/validator'),
-        type: require('jsdoc/tag/type')
+        dictionary: require('./tag/dictionary'),
+        validator: require('./tag/validator'),
+        type: require('./tag/type')
     }
 };
 

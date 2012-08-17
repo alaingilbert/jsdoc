@@ -8,7 +8,7 @@
     @module jsdoc/tutorial/resolver
  */
 
-var tutorial = require('jsdoc/tutorial'),
+var tutorial = require('../tutorial'),
     fs = require('fs'),
     hasOwnProp = Object.prototype.hasOwnProperty,
     conf = {},

@@ -1,4 +1,4 @@
-var doop = require("jsdoc/util/doop").doop;
+var doop = require("./util/doop").doop;
 
 (function() {
     var hasOwnProp = Object.prototype.hasOwnProperty;

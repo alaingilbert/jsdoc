@@ -7,7 +7,7 @@
  */
 
 var jsdoc = {
-        tagDictionary: require('jsdoc/tag/dictionary')
+        tagDictionary: require('./tag/dictionary')
     };
 
 var puncToScope = { '.': 'static', '~': 'inner', '#': 'instance' },

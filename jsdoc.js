@@ -47,7 +47,8 @@ env = {
     opts: {}
 };
 
-args = Array.prototype.slice.call(arguments, 0);
+args = Array.prototype.slice.call(process.argv, 0);
+args.splice(0, 2);
 
 // rhino has no native way to get the base dirname of the currently running script
 // so this information must be manually passed in from the command line
@@ -66,7 +67,7 @@ for (var i = 0; i < args.length; i++) {
 
 env.args = args;
 
-load(env.dirname + '/lib/rhino-shim.js');
+//load(env.dirname + '/lib/rhino-shim.js');
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
@@ -121,7 +122,7 @@ function exit(n) {
 }
 
 function installPlugins(plugins, p) {
-    var dictionary = require('jsdoc/tag/dictionary'),
+    var dictionary = require('./rhino_modules/jsdoc/tag/dictionary'),
         parser = p || app.jsdoc.parser;
 
     // allow user-defined plugins to...
@@ -168,9 +169,9 @@ function indexAll(docs) {
 */
 app = {
     jsdoc: {
-        scanner: new (require('jsdoc/src/scanner').Scanner)(),
-        parser: new (require('jsdoc/src/parser').Parser)(),
-        name: require('jsdoc/name')
+        scanner: new (require('./rhino_modules/jsdoc/src/scanner').Scanner)(),
+        parser: new (require('./rhino_modules/jsdoc/src/parser').Parser)(),
+        name: require('./rhino_modules/jsdoc/name')
     }
 };
 
@@ -187,13 +188,14 @@ function main() {
         docs,
         jsdoc = {
             opts: {
-                parser: require('jsdoc/opts/parser'),
+                parser: require('./rhino_modules/jsdoc/opts/parser'),
             }
         },
         resolver,
         fs = require('fs'),
-        Config = require('jsdoc/config');
+        Config = require('./rhino_modules/jsdoc/config');
 
+    console.log(env.args);
     env.opts = jsdoc.opts.parser.parse(env.args);
 
     try {
@@ -265,24 +267,25 @@ function main() {
     }
     
     if (env.conf.source && env.opts._.length > 0) { // are there any files to scan and parse?
-        var filter = new (require('jsdoc/src/filter').Filter)(env.conf.source);
+        var filter = new (require('./rhino_modules/jsdoc/src/filter').Filter)(env.conf.source);
 
+        //console.log(env.opts._);
         sourceFiles = app.jsdoc.scanner.scan(env.opts._, (env.opts.recurse? 10 : undefined), filter);
 
-        require('jsdoc/src/handlers').attachTo(app.jsdoc.parser);
+        require('./rhino_modules/jsdoc/src/handlers').attachTo(app.jsdoc.parser);
 
         docs = app.jsdoc.parser.parse(sourceFiles, env.opts.encoding);
 
         //The files are ALWAYS useful for the templates to have
         //If there is no package.json, just create an empty package
-        var packageDocs = new (require('jsdoc/package').Package)(packageJson);
+        var packageDocs = new (require('./rhino_modules/jsdoc/package').Package)(packageJson);
         packageDocs.files = sourceFiles || [];
         docs.push(packageDocs);
 
         indexAll(docs);
 
-        require('jsdoc/augment').addInherited(docs);
-        require('jsdoc/borrow').resolveBorrows(docs);
+        require('./rhino_modules/jsdoc/augment').addInherited(docs);
+        require('./rhino_modules/jsdoc/borrow').resolveBorrows(docs);
 
         if (env.opts.explain) {
             console.log(docs);
@@ -291,7 +294,7 @@ function main() {
 
         // load this module anyway to ensure root instance exists
         // it's not a problem since without tutorials root node will have empty children list
-        resolver = require('jsdoc/tutorial/resolver');
+        resolver = require('./rhino_modules/jsdoc/tutorial/resolver');
 
         if (env.opts.tutorials) {
             resolver.load(env.opts.tutorials);
@@ -315,12 +318,14 @@ function main() {
     }
 }
 
-try { main(); }
-catch(e) {
-     if (e.rhinoException != null) {
-         e.rhinoException.printStackTrace();
-     } else {
-        throw e;
-    }
-}
-finally { env.run.finish = new Date(); }
+main();
+
+//try { main(); }
+//catch(e) {
+//     if (e.rhinoException != null) {
+//         e.rhinoException.printStackTrace();
+//     } else {
+//        throw e;
+//    }
+//}
+//finally { env.run.finish = new Date(); }

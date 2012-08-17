@@ -37,11 +37,11 @@ exports.Scanner.prototype.scan = function(searchPaths, depth, filter) {
 
     searchPaths.forEach(function($) {
         var filepath = decodeURIComponent($);
-        if ( fs.stat(filepath).isFile() ) {
+        if ( fs.statSync(filepath).isFile() ) {
             filePaths.push(filepath);
         }
         else {
-            filePaths = filePaths.concat(fs.ls(filepath, depth));
+            filePaths = filePaths.concat(fs.readdirSync(filepath));
         }
     });
     

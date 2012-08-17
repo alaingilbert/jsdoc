@@ -8,7 +8,7 @@
  */
 
 
-var dictionary = require('jsdoc/tag/dictionary');
+var dictionary = require('./dictionary');
 
 function UnknownTagError(tagName, meta) {
     this.name = 'UnknownTagError';

@@ -10,7 +10,7 @@ var currentModule = null;
     @param parser
  */
 exports.attachTo = function(parser) {
-    var jsdoc = {doclet: require('jsdoc/doclet'), name: require('jsdoc/name')};
+    var jsdoc = {doclet: require('../doclet'), name: require('../name')};
 
     // handles JSDoc comments that include a @name tag -- the code is ignored in such a case
     parser.on('jsdocCommentFound', function(e) {

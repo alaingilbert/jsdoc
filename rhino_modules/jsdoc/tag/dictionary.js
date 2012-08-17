@@ -74,7 +74,7 @@ dictionary = {
     }
 };
 
-require('jsdoc/tag/dictionary/definitions').defineTags(dictionary);
+require('./dictionary/definitions').defineTags(dictionary);
 
 for (var prop in dictionary) {
     if ( hasOwnProp.call(dictionary, prop) ) {
