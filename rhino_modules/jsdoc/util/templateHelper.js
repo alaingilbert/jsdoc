@@ -3,7 +3,7 @@
  */
 
 var hash = require('pajhome/hash');
-var dictionary = require('jsdoc/tag/dictionary');
+var dictionary = require('../tag/dictionary');
 
 var files = {};
 

@@ -62,7 +62,6 @@ exports.Parser.prototype.parse = function(sourceFiles, encoding) {
         }
         else {
             filename = sourceFiles[i];
-            console.log(filename);
             try {
                 sourceCode = require('fs').readFileSync(filename, encoding);
             }

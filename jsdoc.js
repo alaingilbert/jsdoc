@@ -78,7 +78,8 @@ env.args = args;
 function include(filepath) {
     try {
         filepath = include.resolve(filepath);
-        load(filepath);
+        console.log(filepath);
+        require(filepath);
     }
     catch (e) {
         console.log('Cannot include "' + env.dirname + '/' + filepath + '": '+e);
@@ -195,7 +196,6 @@ function main() {
         fs = require('fs'),
         Config = require('./rhino_modules/jsdoc/config');
 
-    console.log(env.args);
     env.opts = jsdoc.opts.parser.parse(env.args);
 
     try {

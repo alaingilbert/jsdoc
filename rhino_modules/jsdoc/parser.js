@@ -476,7 +476,7 @@ Parser.TI_CHECK_LABEL = 1 << 17; // indicates to check for label
  * @return {AstRoot}
  */
 Parser.prototype.parse = function(sourceString, sourceURI, lineno) {
-  console.log(sourceString, sourceURI, lineno);
+  console.log('Parser::parse', sourceURI, lineno);
   //this.sourceURI = sourceURI;
   //this.ts = new TokenStream(this, null, sourceString, lineno);
   //return this.parse();

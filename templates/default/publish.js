@@ -1,9 +1,11 @@
+var mkdirp = require('mkdirp');
+
 /*global env: true, publish: true */
 (function() {
 
-    var template = require('jsdoc/template'),
+    var template = require('../../rhino_modules/jsdoc/template'),
         fs = require('fs'),
-        helper = require('jsdoc/util/templateHelper'),
+        helper = require('../../rhino_modules/jsdoc/util/templateHelper'),
         scopeToPunc = { 'static': '.', 'inner': '~', 'instance': '#' },
         hasOwnProp = Object.prototype.hasOwnProperty;
     
@@ -179,16 +181,19 @@
         if (packageInfo && packageInfo.name) {
             outdir += '/' + packageInfo.name + '/' + packageInfo.version + '/';
         }
-        fs.mkPath(outdir);
+
+        mkdirp(outdir, function(err) {
+        });
 
         // copy static files to outdir
-        var fromDir = env.dirname + '/' + templatePath + '/static',
-            staticFiles = fs.ls(fromDir, 3);
+        var fromDir = env.dirname + '/' + templatePath + '/static';
+        var staticFiles = fs.ls(fromDir, 3);
             
         staticFiles.forEach(function(fileName) {
             var toDir = fs.toDir(fileName.replace(fromDir, outdir));
-            fs.mkPath(toDir);
-            fs.copyFile(fileName, toDir);
+            mkdirp(toDir, function(err) {
+              fs.copyFile(fileName, toDir);
+            });
         });
         
         function linkto(longname, linktext) {
